@@ -1,0 +1,13 @@
+
+README
+
+macro directory
+
+tried to split macros into simple procedures
+mostly do the same thing
+
+and - generates quite a few LET expressions
+LET requires a gensym at the moment
+not wrapped head around hygeinic macros
+hygiene - sic macros
+

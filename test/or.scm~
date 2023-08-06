@@ -1,0 +1,52 @@
+
+
+;; or
+;; or defaults to false
+
+(defmacro or args
+  (define rw5 (lambda (e)
+		(cond
+		 ((null? e) #f)
+		 (#t `(let ((tmp ,(car e)))
+			(if tmp
+			    tmp
+			    (or ,@(cdr e))))))))
+  `',(rw5 args))
+
+    
+(or)
+
+(or #t)
+
+(or #f)
+
+(or #t #f)
+
+(or #f #f)
+
+(or #t #t)
+
+
+(defmacro or args
+  (define rw6 (lambda (e)
+		(cond
+		 ((null? e) #f)
+		 (#t `(let ((tmp ,(car e)))
+			(if tmp
+			    tmp
+			    (or ,@(cdr e))))))))
+  (rw6 args))
+
+    
+(or)
+
+(or #t)
+
+(or #f)
+
+(or #t #f)
+
+(or #f #f)
+
+(or #t #t)
+

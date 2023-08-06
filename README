@@ -1,0 +1,930 @@
+
+README LISP 
+
+-------------------------------------------------------------------
+
+callcc ?
+
+
+-------------------------------------------------------------------
+
+derived.scm
+moved macros into a single file called derived.scm
+meaning the derived expressions from the initial set of
+IF , DEFINE , SET! , BEGIN , LAMBDA ,
+
+derived
+COND , LET , LET* , LETREC , AND , OR , 
+
+
+
+remaining derived expressions
+-------------------------------
+
+- LET as a procedure definition ? looping construct ?
+
+
+
+++++ letrec done ...
+- LETREC => LET
+
+(letrec ((a ..)(b ...)(c...)) ...body...)
+=>>> (let ((a '*dummy*)
+     	   (b '*dummy*)
+	   (c '*dummy*))
+	   (set! a ...)
+	   (set! b ...)
+	   (set! c ...)
+	  ...body...)
+
+
+
+
+
+pressure not yet on for macro expansion as it can use the underlying scheme system
+
+as yet we can also include a simplifier into the code when macro expanding
+
+
+
+derived expressions
+====================
+since have a working set of basic operators
+define set! lambda if begin
+
+
+derived
+==================================
+cond->if
+let->lambda
+let* -> let
+letrec -> ??
+define
+let -> recursive loop thingy...
+
+- DEFINE toplevel - two forms +++ fixed +++
+(define (f a b c). .. ) => (define f (lambda (a b c) ...))
+
+
+-------------------------------------------------------------------
+does qq quasi-quote need a runtime eval ?
+
+
+
+-------------------------------------------------------------------
+simple-scheme/src
+
+simple-scheme/meta
+ |- interpreted version used by interpreter x2 
+
+-------------------------------------------------------------------
+writing a debugger
+
+main idea is to automatically instrument the code - which talks to the debugger
+
+debugger then decides continue , step , step over ... etc... trace , profile ..
+yada yada yada ...
+
+how does this all work in recursive lisp ?
+
+running code
+instrument point encountered error ... => debugger notified error ...
+now what ??
+how to recover from error ??
+how to backtrack on error ??
+
+
+-------------------------------------------------------------------
+callcc seems a bit weird when done in interpreter 
+
+
+-------------------------------------------------------------------
+
+need some sort of macro expansion before evaluation available at compile / run time ?
+
+if macros are defined and loaded at toplevel , its likely the environment is mixed with definitions
+at runtime environment
+
+so need two seperate environments
+
+one for macro expansion time
+one for runtime with just functions , no macros , everything fully expanded,
+
+what about gensym?
+
+no complex define
+no (define (f . args) ...) => (define f (lambd a....
+no cond ... into if statements ....
+
+-------------------------------------------------------------------
+
+try implement call/cc in base-eval.scm first
+then translate to the machine.scm version later ....
+
+see if base-eval.scm works ...
+
+;; (call/cc fn-one-arg)
+(define eval-callcc ...
+   (base-eval fn-one-arg env
+            (lambda (fn)
+	        (cont (fn cont)))))
+
+continuation may not be invoked
+cont will be a primitive procedure as far as meta- base-eval concerned
+shown we can run primitive procedures such as cons car ...
+will it work ? who knows ...
+
+
+
+-------------------------------------------------------------------
+recursive define tree ....
+what does this mean ?
+
+(define f (define g (define h (define i (define j ....)))))
+
+-------------------------------------------------------------------
+(define (null? xs) ...)
+=>
+(define null? (lambda xs) ....)
+
+
+
+-------------------------------------------------------------------
+common lisp
+AND
+
+not able to map AND over two lists because AND is a macro
+whats happened here is that MACRO world has
+intruded onto the RUNTIME world
+
+should be able to write
+(map and '(#t #t #f #f) '(#f #t #t #f)) => (#f #t #f #f)
+
+
+-------------------------------------------------------------------
+
+null?
+if its the primitive version do , that.
+
+generic methods / procedures to be default surely..
+
+
+
+-------------------------------------------------------------------
+
+debugger for lisp
+
+instrumentation ?
+how low a level ??
+
+
+-------------------------------------------------------------------
+
+$e enables introspection of environment
+$s enables introspection of stack
+
+-------------------------------------------------------------------
+
+../test/define4.scm
+
+(define g (lambda (x) (cons x x)))
+
+(g 123)
+
+x
+
+;; x should be undefined in environment
+;; if DEFINE implementation does not restore original environment after eval'd 2nd part define
+;; DEFINE will pollute environment with definition ...
+
+
+$e
+
+>>>>>>> commentary
+
+g is procedure
+g is called with 123
+
+as far as g is concerned it is in tail position , so why save environment ?
+just trash it ...
+
+tried a begin ...
+didnt work
+
+tried adding save-env .... restore-env around REPL ??
+
+possible we have too many environments on the stack??
+
+
+
+-------------------------------------------------------------------
+
+undefine d
+might be useful to delete definition from environment
+e.g test if environment polluted
+
+undefine f x 
+(define f (lambda (x) (+ x 2)))
+(f 5)
+x
+
+-------------------------------------------------------------------
+saves environment ? 
+
+define
+set!
+if
+begin
+quote
+
+------------------------------------------------------------------
+
+internal defines are not same as external defines
+
+(define f ...
+     (define g ...
+     (define h ...
+     (define i ...
+
+should really be
+
+(define f
+    (letrec g h i ...))
+    
+
+------------------------------------------------------------------
+
+Q *** when do we need to save the environment register ?
+--------------------------------------------------------
+
+*** if no higher order procedures , all procedures have no free variables
+e.g everything is at toplevel global or procedure given all arguments
+then no need to save environment ?
+
+lets assume we want MOST flexible system
+
+
+tail calls
+--------------
+
+(set! A B)
+go off to evaluate B if we do not save env ,
+when we come to assign A the value of evaluating B
+
+when to know when in tail position ????
+
+
+
+
+
+
+
+(begin Z)
+(begin A Z)
+(begin A ... Z)
+
+here Z is in tail position - so no saving environment as 
+otherwise save env
+
+
+(if A B C)
+-----------------
+B and C are in tail position
+
+A is not in tail position - hence will lead to space leak if A always loops
+
+(define f (lambda (n)
+	    (begin
+	      (display "\rn = ") (display n) (newline)
+	      (if (f (+ n 1))
+		  (f (- n 1))
+		  (f (+ n 2))))))
+(f 1)
+
+
+
+------------------------------------------------------------------
+
+evaluating arguments to function
+
+save-env
+...
+m-eval
+...
+restore-env .....
+
+(f (g a) (h b) (i c))
+
+all of these ---- f g a h b i c --- should be in environment to compute f
+
+
+
+....
+(if *???*  do-this  do-that)
+
+somewhere in code *???* never returns , then we will be saving environment on stack
+every time we enter this expression
+
+(define loopy (lambda () (if (loopy) .. .. )))
+
+loopy will eventually eat up stack space ...
+
+------------------------------------------------------------------
+
+compound apply
+
+current environment is trashed , where do we save current environment ?
+
+(f a b c)
+
+on running a --- maybe its a compound .. is there still more to do??
+do we need to save env ?
+
+
+
+(if (f a) . . .)
+
+------------------------------------------------------------------
+
+unit testing
+
+------------------------------------------------------------------
+lambda -- how represent + handling
+
+closure - how represent + handling ie find lambda args of closure ...
+
+pretty printer ... is horrific mess ...
+
+no parser ... so reliant on system parser guile ...
+
+
+
+
+
+------------------------------------------------------------------
+
+adjusted machine.scm the sicp version to try and use our new understanding of environment.
+
+now have to go through pain of transition to a different environment implementation
+
+procedure name change , no help , no docs ... nothing...
+
+
+
+------------------------------------------------------------------
+
+SUCCESS !!!
+
+environment as seen from lambda is a vector of one item
+
+env = #{ PTR }
+
+but as far as environment env is concerned its always pointing to just the vector
+
+we can change contents of the vector , but environment captured by the lambda in the closure
+is none the wiser.
+as far as its concerned its got the environment.
+
+means is we can keep adding definitions to the toplevel without need to declare every routine
+as a letrec or
+define everything up front as 0 , then set! everything again with definitions ...
+
+
+----------------------------------------------------------------------------------------
+
+what about internal definitions
+(define f (lambda ....)
+  (define f (lambda ....))
+    (define f (lambda ... ))
+
+------------------------------------------------------------------
+
+re-definition of definition
+  (define f ...)
+  (define f ...)
+  ....
+  .....lots more code...
+  ....
+  (define f ...)
+  ...
+
+multiple-redefinitions of f could cause bugs ...
+
+
+
+
+------------------------------------------------------------------
+
+WARNING : AGAINST QUOTED EXPRESSIONS AND MUTATION
+
+
+long and short of this means
+
+any quasiquoted or quoted expression which may be reduced to same pointer
+by the system which may be altered by some internal or external procedure
+will throw all subsequent tests off kilter
+because what think see like a quoted expression , may have been modified
+beforehand
+
+
+
+
+
+;;----------------- all out modified -------------------------
+(define (extend-env! env key val cont)
+  (let ((old-car (car env))
+	(old-cdr (cdr env)))
+    (set-cdr! env (cons old-car old-cdr))
+    (set-car! env (cons key val))
+    (cont val)))
+
+
+
+(define (modify-env! env key val cont)
+  (let ((exchanged #f))
+    (define (recur ys)
+      (cond
+       ((null? ys) #f)
+       ((eq? (car (car ys)) key)  (begin
+				    (set-cdr! (car ys) val)
+				    (set! exchanged #t)
+				    val))
+       (#t (recur (cdr ys)))))
+    (let ((maybe (recur env)))
+      (if exchanged
+	  (cont maybe)
+	  (extend-env! env key val cont)))))
+
+------------------------------------------------------------------
+
+(define-module (environment-test)
+  #:use-module (srfi srfi-64)
+  #:use-module (environment))
+
+(test-begin "environment-test")
+
+
+
+(let ((env `((a . 1)(b . 2)(c . 3))))
+  (modify-env! env 'a 4 (lambda (r) r))
+  (test-equal `((a . 4)(b . 2)(c . 3))
+    env )
+  (modify-env! env 'b 3 (lambda (r) r))
+  (test-equal `((a . 4)(b . 3)(c . 3))
+	      env )
+  (modify-env! env 'c 2 (lambda (r) r))
+  (test-equal `((a . 4)(b . 3)(c . 2))
+    env)
+  (modify-env! env 'd 1 (lambda (r) r))
+  (test-equal `((d . 1)(a . 4)(b . 3)(c . 2))
+    env)
+  )
+
+
+(let ((env `((a . 1)(b . 2)(c . 3))))
+  (newline)(write "env => ") (write env) (newline)
+  (extend-env! env 'a 4 (lambda (r) r))
+  (test-equal `((a . 1)(b . 2)(c . 3))
+    env)
+  (newline)(write "env => ") (write env) (newline))
+
+
+(test-end "environment-test")
+
+
+----------------------------------------------------------------
+
+%%%% Starting test environment-test
+Group begin: environment-test
+Test begin:
+  source-file: "environment-test.scm"
+  source-line: 10
+  source-form: (test-equal (quasiquote ((a . 4) (b . 2) (c . 3))) env)
+Test end:
+  result-kind: pass
+  actual-value: ((a . 4) (b . 2) (c . 3))
+  expected-value: ((a . 4) (b . 2) (c . 3))
+Test begin:
+  source-file: "environment-test.scm"
+  source-line: 13
+  source-form: (test-equal (quasiquote ((a . 4) (b . 3) (c . 3))) env)
+Test end:
+  result-kind: pass
+  actual-value: ((a . 4) (b . 3) (c . 3))
+  expected-value: ((a . 4) (b . 3) (c . 3))
+Test begin:
+  source-file: "environment-test.scm"
+  source-line: 16
+  source-form: (test-equal (quasiquote ((a . 4) (b . 3) (c . 2))) env)
+Test end:
+  result-kind: pass
+  actual-value: ((a . 4) (b . 3) (c . 2))
+  expected-value: ((a . 4) (b . 3) (c . 2))
+Test begin:
+  source-file: "environment-test.scm"
+  source-line: 19
+  source-form: (test-equal (quasiquote ((d . 1) (a . 4) (b . 3) (c . 2))) env)
+Test end:
+  result-kind: pass
+  actual-value: ((d . 1) (a . 4) (b . 3) (c . 2))
+  expected-value: ((d . 1) (a . 4) (b . 3) (c . 2))
+Test begin:
+  source-file: "environment-test.scm"
+  source-line: 27
+  source-form: (test-equal (quasiquote ((a . 4) (a . 4) (b . 3) (c . 2))) env)
+Test end:
+  result-kind: pass
+  actual-value: ((a . 4) (a . 4) (b . 3) (c . 2))
+  expected-value: ((a . 4) (a . 4) (b . 3) (c . 2))
+Group end: environment-test
+# of expected passes      5
+
+------------------------------------------------------------------
+
+understanding how define operator works in scheme
+
+1 . toplevel define
+
+alist = ((x . 3)(y . 4) ...)
+
+if env = alist then cannot set head of alist such that
+(eq? old-alist new-alist) => #t
+
+env = ( ((y . 4)... old-env... )
+
+extend env = ( ((x . 3) ...)
+
+
+
+
+trouble understanding how environment works in scheme also
+
+
+;; if ignore primitive operators ...
+;; env = (())
+;; able to extend front of environment
+;; 
+((lambda (x y) (+ x y)) 3 4)
+   (+ x y) :  ((x . 3)(y . 4))
+   
+
+------------------------------------------------------------------
+
+
+
+
+
+
+
+------------------------------------------------------------------
+
+implementing lisp
+
+(define f (lambda ()...
+ (define fac (lambda ...))
+ (define fib (lambda ...))
+ ...
+ ...))
+ 
+(let ((f ...)) ...body...)
+
+f is in scope when run body
+
+(let ((g ...)) ...body...)
+
+
+
+
+
+------------------------------------------------------------------
+
+if all operators are CONS CAR CDR only
+
+difficult to determine if program following correct rules
+
+may be trying to CAR CDR into a structure that is not supposed to be
+
+accessed like that
+
+resulting in meaningless but seemingly correct hard to find bugs
+
+example
+
+(FN (closure (lambda (x) 1 2 (+ x 3)) '((a 1)(b 2)(c 3))))
+=> 5 ?
+
+environment is a shared data structure
+
+immutable is easier to reason about
+
+useful for proving systems
+
+correctness ?
+
+------------------------------------------------------------------
+
+fast and loose implementation
+
+rather try to nail everything down in terms of error handling
+just assume its well formed and continue from there
+
+environment
+
+extend =
+lookup =
+modify-env ? =
+modify-or-extend-env ? =
+
+
+
+
+------------------------------------------------------------------
+
+if its not possible to achieve with environment without mutation
+possibly move to a state transition model
+
+in state -> out state
+
+function given state in , outputs next state ... repeatable
+
+unlike modify-env! destructively modify env SET-CAR! SET-CDR! ??
+
+------------------------------------------------------------------
+
+continue work on environment
+
+to get in-place mutation working as passing environment by value
+means needs to be mutated inside itself
+
+------------------------------------------------------------------
+
+
+
+list-utility.scm
+list-utility-test.scm : pass
+
+environment.scm
+environment-test.scm : pass
+
+difficulty environment is that needs to be able to be mutated in place
+if no entries in an empty list '() there is no CAR CDR in which to use
+SET-CAR! SET-CDR!
+means environment assoc has to be surrounded by an outer list
+ has to be a list of lists (>()< )
+
+
+closure.scm
+closure-test.scm : pass
+
+----------------------------------------
+base-eval.scm   
+base-eval-test.scm : ??? --- ---
+
+base-eval has a problem unless set-car! set-cdr! on environment ... lead back to environment.scm
+is it possible to do this without mutation at such early stage ??
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------
+time travel is ability to go back to a time before now
+if time travel is possible , you would return to a place and time that seemed like before
+if cannot tell difference between previously and now in the before time ,
+you have travelled back in time ...
+if cannot tell ... then you have ... since if built machine that could tell difference ,
+then you could tell , and then therefore not travelled back in time
+since cannot , you have . job done .
+------------------------------------------------------------------------------------------------
+
+grid of computations or REPLs
+{expression - environment - continuation}
+
+-------------------------------------------
+       meta-level interpreter
+-------------------------------------------       
+1.1
+1.2
+1.3
+1.4
+1.5 2.1   pass interpreter 2 an escape to repl-1 
+    2.2
+    2.3
+    2.4
+    2.5 3.1  at any time interpreter 2 can escape and be back at 1.5 where it is 
+        3.2  expecting some input ...
+	3.3  but knowing something new it did not know before perhaps ...
+	3.4 4.1
+	    4.2
+	3.5
+	3.6
+	3.7
+what does it mean to exec-at-metalevel EM  ?
+(EM (EM (EM ....
+infinite tower of interpreters ...
+
+at EM a function becomes a macro for the level below ?
+like an fexpr ?
+
+or is it like EVAL ?
+EM
+
+each interpreter with its own environment
+effectively solves the module problem
+
+interplay between an expression at interpreter level
+or some other level - executable machine code subroutine
+or some scheme interpreter level - 
+or interpreter running on interpreter ... slow down ...
+----------------------------------------------------------------
+
+
+repl in continuation passing style
+
+pass height into make-debugger or make-repl
+
+get height prompt
+ready{1}[nth] >
+ready{1}[nth] >
+ready{1}[nth] >
+ready{1}[nth] > error
+ready{2}[nth] > moved up to higher level
+
+ or can think moved to a different evaluator ...
+ with a different binding for current level...
+
+{e1} {e2} {e3} {e4} {e5} ... {e-fred} ...{e-bob} ....{e-echo}.....
+different e - evaluators ....
+each own environment
+
+if procedures never return
+
+if things go wrong
+
+since cant fall out by returning , we have to send the computation forward to somewhere else ...
+
+continue continuation is just somewhere to jump to.
+
+
+(define (base-eval exp env cont)
+  (cond
+   ((number? exp)   (cont exp)) 
+   ((boolean? exp)  (cont exp)) 
+   ((string? exp)   (cont exp)) 
+   ((symbol? exp)   ***(eval-var exp env cont)***  )	
+   ((and (pair? exp)(eq? (car exp) 'if))  (eval-if exp env cont))
+   ...
+   ..
+   .
+   (#t (list 'error
+	     (list 'state base-eval exp env cont)
+	     "base-eval does not know how to do this"))))
+	     
+       
+
+look at base-eval definition
+where have *** ***
+if eval-var fails then it will just fall out
+so we need to catch it ?
+but then its not tail recursive ?
+so need somewhere to send it ?
+
+ eval-var exp env cont
+
+base-eval exp env cont
+--------------------------
+ symbol -> {eval-var exp env (lambda (result)
+                                 ...)}
+
+what if want to replay this?
+    exp env result
+
+***error***
+it went wrong in base-eval , how did we get here ?
+
+
+
+
+
+./runtest to run the tests
+
+
+reader makes characters internal representation
+this representation misses important things such as
+where data come from
+what file
+what line , column
+
+
+base-eval exp env cont
+ number?  -> cont exp
+ boolean? -> cont exp
+ string?  -> cont exp
+ pair? with if in operator position -> eval-if exp env cont
+ symbol? ->  eval-var exp env cont
+
+
+eval-var exp env cont
+ if symbol not found in environment then simply return error message
+ (list 'ERROR-MESSAGE exp env cont)
+ saved state of computation
+
+
+working on IF conditional and the CONDITION fails
+ (base-eval ...*error*....)
+ then cont is never called and it falls out of base-eval like a
+  normal returning function
+  back to the underlying system ...
+
+
+working on EVAL something and SOMETHING fails ...
+ (base-eval ...*error* ...)
+
+on getting to the debugger , how is the debugger to figure out what to display to user ?
+
+(list 'error (list 'state base-eval exp env cont) "base-eval does not know how to do this"))))
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+weird hizenbugs
+====================
+computer wont recognise exported routines
+module system export import ...
+
+modules
+
+base-eval : evaluator
+closure : handles lambda -> closure
+list-utility : first second third etc...
+environment : checks adding items , looking for them works? just cons=ing
+
+if variable not found in environment , what should be the answer ?
+
+
+
+
+
+
+
+unit test based development
+
+start geiser M-x geiser
+
+1. environment
+
+eliminated simple buggy mistakes
+
+type checks ensures environment object passed in really is an environment
+, not some random vector with 'environment tag
+
+circular lists...
+
+proxy environment may well have lots other things in it ,
+only interested in a b c variables...
+
+-L means where to find library module files
+if not included guile complain cant find modules
+
+guile --no-auto-compile -L . tests/environment-test.scm
+
+define
+go into environment and look for fac
+see if it is there , if not extend environment before
+lambda clamps environment down
+
+(define fac (lambda ... fac ...))
+
+environment will be mutated as using a vector
+variables hold access
+
+
+(define e (make-environment))
+
+(define f (list e))
+(define g (list e))
+
+(extend-env e 'a 3)
+
+e
+f
+g
+
+should all find a => 3 binding
+

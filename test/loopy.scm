@@ -1,0 +1,15 @@
+
+;; this is where CONDITION of IF statement is a tail-call , never returns ...??
+;; when would that be useful ??
+;;
+
+(define f (lambda (n)
+	    (begin
+	      (display "\rn = ") (display n) (newline)
+	      (if (f (+ n 1))
+		  (f (- n 1))
+		  (f (+ n 2))))))
+
+(f 1)
+
+
