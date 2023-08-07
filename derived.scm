@@ -34,21 +34,22 @@
 
   ;; error handling ? debugging ? malformed quasiquoted expression ??
   (define (qq-entry ex)
-  (cond
-   ((null? ex) (list (quote quote) ex)) ;; `() = () 
-   ((not-pair? ex) (list (quote quote) ex)) ;; `a = 'a 
-   ;; ((unquoted-splice? ex) "error unquote-splice outside of list") ;; `,@(list 1 2 3)
-   (#t (qq-recur ex))))
+    (cond
+     ((null? ex) (list (quote quote) ex)) ;; `() = () 
+     ((not-pair? ex) (list (quote quote) ex)) ;; `a = 'a 
+     ;; ((unquoted-splice? ex) "error unquote-splice outside of list") ;; `,@(list 1 2 3)
+     (#t (qq-recur ex))))
 
   (define (qq-recur ex)
     (cond
-     ((null? ex) (list (list (quote quote) (quote ())))) ;; (list 'quote '()) => (quote ())
+     ((null? ex) (list (quote list) (list (quote quote) (quote ())))) ;; (list 'quote '()) => (quote ())
      ((not-pair? ex) (list (quote list) (list (quote quote) ex))) ;; not unquoted or spliced
      ((unquoted? ex) (list (quote list) (unquoted-thing ex))) ;; (list a) 
      ((unquoted-splice? ex) (unquoted-splice-thing ex)) ;; unquote-splice ,@ xs => xs 
      (#t
       (append (list (quote append))
 	      (map qq-recur ex)))))
+
   ;; here is start
   (qq-entry (quasi-quote-body ex)))
 
