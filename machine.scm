@@ -1,7 +1,8 @@
 
 
+;; github terryc321/simple-scheme ...
 (add-to-load-path "/home/terry/simple-scheme/src/")
-(add-to-load-path "/home/terry/simple-scheme/macros/")
+;;(add-to-load-path "/home/terry/simple-scheme/macros/")
 
 ;; expand loads other macros cond let let* and or 
 ;;(load "/home/terry/simple-scheme/macros/expand.scm")
@@ -105,7 +106,9 @@
 		(vector-ref . ,vector-ref)
 		(vector-set! . ,vector-set!)
 		(vector . ,vector)
+		(gensym . ,gensym)
 		))))
+
 
 
 

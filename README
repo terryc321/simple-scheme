@@ -2,6 +2,114 @@
 README LISP 
 
 -------------------------------------------------------------------
+machine.scm - sicp style register machine for 
+
+-------------------------------------------------------------------
+tail call language
+
+idea is a procedure simply evaluates arguments and applies procedure to argument
+
+procedure call itself does not save anything as it never expects to return
+
+this causes everything else to pick up the pieces if there is an expectation of procedure
+
+returning
+
+for example
+
+(f (g 10) (h 20))
+
+read this as
+compute g applied to argument 10 - result call it a
+compute h applied to argument 20 - result call it b
+compute f applied to result a and b
+
+in functional language
+f may be lazy and do nothing
+g 10 may lead to undefined in which case no sense in computing f or h of anything
+h 20 may lead to undefined in which case no sense in computing f or g of anything
+
+could choose to compute both (g 10) and (h 20) at same time , whichever returns first
+
+could choose not to compute , rather try to prove something about this f g h expression
+which might lead us to understand that computing anything with this expression
+is fruitless as it never finishes
+undecidable in general
+but in some sense specific problems may very well be easily decidable whether or not they terminate
+
+f ,g,h all tail recursive they do not store anything on stack
+procedure calls clobber the environment register
+
+so after call (g 10) it has g 's environment , however g is defined
+say g = (lambda (peter) (+ peter 5))
+environment of g is ... (peter bound to 5) ... + environment at time g was defined ...lexical closure...
+
+(f (g 10) (h 20))
+
+(save environment)
+....(push 10)
+(call g)
+(restore environment) ;;;(g 10) on stack
+
+...(push 20)
+(save environment)
+(call h)
+(restore environment) ;;; (h 20) on stack
+
+(jmp f)
+
+shared result stack is weak in sense that another procedure may choose to
+clobber the results of other procedures
+system wide effect
+then call to f will be using some results from g or h or garbage
+
+{garbage h}
+{garbage g}
+{h g}
+{h garbage}
+{g garbage}
+{garbage garbage}
+
+also underlying system may have a fault in it such that
+memory manager may go wrong one in a billion times , just the time
+you need it to work
+
+why need for environment ?
+why need for lambda ?
+
+----------------------------------------------------------------------
+
+
+
+
+-------------------------------------------------------------------
+haskell curried functions
+
+(define (adder)
+    (lambda (a)
+      (lambda (b)
+	(+ a b))))
+
+(adder 1) =>> (closure ...)
+((adder 1) 2) => 3
+
+-------------------------------------------------------------------
+
+automatic conversion of code written in continuation passing style (cps)
+for machine exp env cont
+
+lazily evaluated , does it matter that exp is not a pair ,
+therefore if it did fail it doesnt matter because it just does not match pattern so no
+further reduction could take place
+
+(define (base-eval exp env cont)
+    (case exp
+      (quote x) => x
+      (symbol? x) => lookup x      
+      (quasiquote x) =>
+      (define (name args) =>       
+      ))
+-------------------------------------------------------------------
 
 callcc ?
 
@@ -21,9 +129,8 @@ COND , LET , LET* , LETREC , AND , OR ,
 remaining derived expressions
 -------------------------------
 
++++ let-procedure->compound +++ turns let loop construct into letrec form +++ fixed +++
 - LET as a procedure definition ? looping construct ?
-
-
 
 ++++ letrec done ...
 - LETREC => LET
@@ -36,10 +143,6 @@ remaining derived expressions
 	   (set! b ...)
 	   (set! c ...)
 	  ...body...)
-
-
-
-
 
 pressure not yet on for macro expansion as it can use the underlying scheme system
 

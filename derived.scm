@@ -12,6 +12,48 @@
 ;; error handling ?
 
 
+;; quasiquote ...
+;; $qq ($qq EXPR) define a quasi-quoted expression
+;; $qc ($qc EXPR) unquote behaviour
+;; $qs ($qs EXPR) unquote-splicing behaviour
+;; -----------------------------------------------------
+(define (qq->compound? ex)
+  (and (pair? ex)
+       (eq? (car ex) '$qq)))
+
+(define (qq->compound ex)
+  (define (unquoted? ex)  (and (pair? ex) (eq? (car ex) '$qc)))
+  (define (unquoted-thing ex) (cadr ex))
+  (define (unquoted-splice? ex) (and (pair? ex) (eq? (car ex) '$qs)))
+  (define (unquoted-splice-thing ex) (cadr ex))
+  (define (parent-of-unquoted-splice? ex) (and (pair? ex)
+					       (unquoted-splice? (car ex))))				     
+  (define (parent-get-spliced-thing ex) (cadar ex))
+  (define (not-pair? ex) (not (pair? ex)))
+  (define (quasi-quote-body ex) (cadr ex))
+
+  ;; error handling ? debugging ? malformed quasiquoted expression ??
+  (define (qq-entry ex)
+  (cond
+   ((null? ex) (list (quote quote) ex)) ;; `() = () 
+   ((not-pair? ex) (list (quote quote) ex)) ;; `a = 'a 
+   ;; ((unquoted-splice? ex) "error unquote-splice outside of list") ;; `,@(list 1 2 3)
+   (#t (qq-recur ex))))
+
+  (define (qq-recur ex)
+    (cond
+     ((null? ex) (list (list (quote quote) (quote ())))) ;; (list 'quote '()) => (quote ())
+     ((not-pair? ex) (list (quote list) (list (quote quote) ex))) ;; not unquoted or spliced
+     ((unquoted? ex) (list (quote list) (unquoted-thing ex))) ;; (list a) 
+     ((unquoted-splice? ex) (unquoted-splice-thing ex)) ;; unquote-splice ,@ xs => xs 
+     (#t
+      (append (list (quote append))
+	      (map qq-recur ex)))))
+  ;; here is start
+  (qq-entry (quasi-quote-body ex)))
+
+
+
 ;; (let loop ((i 0))
 ;;   (display i)
 ;;   (if (< i 10)
@@ -399,6 +441,7 @@
 	 ((letrec->compound? ex) (letrec->compound ex))
 	 ((and->compound? ex)   (and->compound ex))
 	 ((or->compound? ex)    (or->compound ex))
+	 ((qq->compound? ex)    (qq->compound ex))
 	 (#t (expand-elems ex)))))
 
 
