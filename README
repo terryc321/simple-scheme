@@ -3,9 +3,143 @@ README LISP
 
 -------------------------------------------------------------------
 
+load "src/macros/substitution.scm"  ----->
+subst-comma : expr symbol value
+subst-splice : expr symbol value
+
+load "src/macros/alist-module.scm" --->
+|- provides alist-member?
+|- proper list , key value pairs are first + second
+rather than cons CAR CDR dotted pairs
+
+load "src/macros/macro-module.scm" ---->
+macro-register
+|- install-macro! name pred proc
+|- macro-registered? expr   : to check expr fires expander
+
+
+load "src/macros/while.scm"
+--> executes install-macro!
+       |--> requires macros/substitution.scm
+
+
+
+load required macros 
+
+
+(install-macro! NAME  PREDICATE  PROCEDURE)
+
+NAME is a visual way to give meaning
+PREDICATE determines if PROCEDURE could be applied to expression to be expanded
+PROCEDURE takes expression returns expression , hopefully an expanded expression
+
+
+-------------------------------------------------------------------
+substitution mechanism
+
+{subst-comma expression symbol value}
+{subst-splice expression symbol value}
+
+acts like quasiquote but does not require quasiquoted expression
+does not require comma ,  unquote
+does not require comma at ,@  unquote-splicing
+
+subst-comma replaces given symbol with given value in the expression
+
+subst-splice weaves list provided by value on matching expression with symbol inside a list
+ really just appends value provided to CDR of list ...
+ otherwise conses CAR list to CDR list...
+
+here is an example with my WHILE macro 
+
+(define (while->compound ex)
+  (let* ((tmp-value (gensym "loop"))
+	 (condition (cadr ex))
+	 (body (cddr ex))
+	 (t1 '(letrec ((TMP (lambda ()
+			      (if CONDITION
+				  (begin
+				    BODY
+				    (TMP))
+				  #f))))
+		(TMP)))
+	 (s1 (subst-comma t1 'TMP (gensym "loop")))
+	 (s2 (subst-comma s1 'CONDITION condition))
+	 (s3 (subst-splice s2 'BODY body)))
+    s3))
+
+
+
+further ideas to have a section of expression to be further replaced or given some attributes ??
+LABEL-START .... LABEL-END
+
+
+-------------------------------------------------------------------
+
+
+
+-------------------------------------------------------------------
+quasiquote or similar mechanism
+-------------------------------------------------------------------
+
+in developing while loop , ended up developing an alternative for quasiquote
+
+
+ways to advise as writing code ??
+
+into the rabbit hole we go ...
+
+if try splicing in an improper list .. it can find tail of list , then it falls apart ...
+scheme@(guile-user)> `(a b c ,@'(1 2 . 3) d e f)
+ice-9/boot-9.scm:1685:16: In procedure raise-exception:
+In procedure append: Wrong type argument in position 1 (expecting empty list): 3
+
+
+improper lists
+if want handle templates improper lists (lambda (HEAD . TAIL) ...)
+
+can i use MAP over improper list ?
+scheme@(guile-user) [1]> (map (lambda x x) '(a b . c))
+ice-9/boot-9.scm:1685:16: In procedure raise-exception:
+In procedure map: Not a list: (a b . c)
+
+Entering a new prompt.  Type `,bt' for a backtrace or `,q' to continue.
+scheme@(guile-user) [2]> (map (lambda x x) '(1 2 3))
+$5 = ((1) (2) (3))
+>>>> NO ! 
+
+can i use MEMBER over improper list ?
+scheme@(guile-user) [1]> (member 'a '(a b . c))
+ice-9/boot-9.scm:1685:16: In procedure raise-exception:
+In procedure member: Wrong type argument in position 2: (a b . c)
+>>>> NO !
+
+
+src/
+test/quasi-quote-test.scm
+
+expression expands but like flattened ?
+
+macros/while.scm ... rethinking quasi-quote in terms of substitution of SYMBOLS
+seperated MANNER of subsitution
+COMMA substitute
+SPLICE substitute
+
+may be other types of substitution
+REMOVE substitute
+DUPLICATE substitute
+
+thinking about future debugging problems where we will need to annotate source code ...
+
+COMPOSE macro
+take a sequence of procedures that take X and produce an X
+feed it through each procedure one by one until get result
+
+
 
 -------------------------------------------------------------------
 named argument lists
+
 
 
 -------------------------------------------------------------------
@@ -18,6 +152,16 @@ destructuring on arglist like s-expression pattern matching ...
 ((lambda (a b) a) 6 7) ;; pass 2 args , return 1st 
 ((lambda (a b) b) 7 8) ;; pass 2 args , return 2nd
 ((lambda (a . b) b) 1 2 3 4) ;; expect list (2 3 4) but baulks ?? whys..
+
+(a . b) caused macro expander to baulk
++++fix +++
+needed to check if pair? (a . b) yes
+not null? (cdr pair)
+not pair? (cdr pair)
+ then its a symbol or something not a pair or null ...
+ macro expander just return the something
+
+some kind of context (a . b) is inside (lambda arglist ...
 
 -------------------------------------------------------------------
 machine.scm - sicp style register machine for 
@@ -969,19 +1113,6 @@ working on EVAL something and SOMETHING fails ...
 on getting to the debugger , how is the debugger to figure out what to display to user ?
 
 (list 'error (list 'state base-eval exp env cont) "base-eval does not know how to do this"))))
-
-
-
-
-
-
-
- 
-
-
-
-
-
 
 
 weird hizenbugs
