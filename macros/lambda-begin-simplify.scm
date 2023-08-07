@@ -1,4 +1,7 @@
 
+
+((lambda ()
+
 ;; rewrites
 ;; (lambda args (begin ...)) =>> (lambda args ...)
 ;; 
@@ -19,6 +22,13 @@
     (cons 'lambda (cons (cadr ex) (cdr (car (cddr ex)))))))
 
 
+(install-macro! 'lambda-begin-simplify
+		 lambda-begin->simplify?
+		 lambda-begin->simplify)
+
+
+
+))
 
 ;; (define ex '(lambda (a b c) (begin 1 2 3)))
 

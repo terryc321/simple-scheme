@@ -1,4 +1,9 @@
 
+
+
+
+((lambda ()
+
 ;; simplifier removes excess begin statements
 ;; (if #t x y) => x
 (define if->simplify? (lambda (ex) (and (pair? ex)
@@ -15,6 +20,13 @@
      ((eq? (cadr ex) #f) (cadddr ex))
      (#t ex))))
 
+
+(install-macro! 'if->simplify
+		 if->simplify?
+		 if->simplify)
+
+
+))
 
 ;; (if->simplify? '(if #t 1 2))
 ;; (if->simplify? '(if #f 1 2))

@@ -1,4 +1,7 @@
 
+
+((lambda ()
+   
 ;; rewrites
 ;; (define (f a b c) ...) => (define f (lambda (a b c)...)
 ;; 
@@ -12,6 +15,13 @@
   (lambda (ex)
     (append (list 'define (caadr ex)) (list (cons 'lambda (cons (cdadr ex) (cddr ex)))))))
 
+
+(install-macro! 'define->simplify
+		 define->simplify?
+		 define->simplify)
+
+
+))
 
 
 

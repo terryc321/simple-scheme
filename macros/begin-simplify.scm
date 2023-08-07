@@ -1,4 +1,7 @@
 
+
+((lambda ()
+
 ;; simplifier removes excess begin statements
 ;; (begin a) => a
 (define begin->simplify? (lambda (ex) (and (pair? ex)
@@ -13,4 +16,13 @@
 ;; (begin           a b c d (+ 1 1) (cons 3 4) y) ==> y
 ;; if all these     <--------------------------> have no side effects
 ;; can simply ignore them and just do y itself only.
+
+
+(install-macro! 'begin->simplify
+		 begin->simplify?
+		 begin->simplify)
+
+
+))
+
 

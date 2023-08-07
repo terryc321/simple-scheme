@@ -1,0 +1,60 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.85]{beramono}
+\usepackage{listings}
+
+\begin{document}
+This is my \emph{first} document prepared in \LaTeX.
+
+\lstset{numbers=left,numberstyle=\tiny,numbersep=5pt,language=Lisp,
+  stringstyle=\ttfamily\small,basicstyle=\ttfamily\footnotesize,
+  showstringspaces=false,breaklines}
+
+
+\begin{lstlisting}[caption=Getting labels, label=glabels] 
+(defun find-symbol-between-sigma-sets (sigma-a sigma-b scan-node symbols g)
+  (let* ((scan-node-set-in-sigma-a (find-scan-node sigma-a scan-node))
+         (next-scan-node-set-in-sigma-b 
+          (get-next-node-set-from-scan-node-set 
+           scan-node-set-in-sigma-a sigma-b g))
+         (union-node-set-in-sigma-a 
+          (get-previous-nodes next-scan-node-set-in-sigma-b g)))
+    (if 
+     (and 
+      (memberp union-node-set-in-sigma-a scan-node-set-in-sigma-a)
+      (path-exists-between-set-a-and-set-b 
+       union-node-set-in-sigma-a next-scan-node-set-in-sigma-b g))
+     (car 
+      (unique-get-symbols 
+       union-node-set-in-sigma-a next-scan-node-set-in-sigma-b symbols))
+     nil)))
+\end{lstlisting} 
+
+\newpage
+
+\begin{lstlisting}[caption=Getting labels,
+  basicstyle=\footnotesize,literate={-}{{-}}1]
+(defun find-symbol-between-sigma-sets (sigma-a sigma-b scan-node symbols g)
+  (let* ((scan-node-set-in-sigma-a (find-scan-node sigma-a scan-node))
+         (next-scan-node-set-in-sigma-b 
+          (get-next-node-set-from-scan-node-set 
+           scan-node-set-in-sigma-a sigma-b g))
+         (union-node-set-in-sigma-a 
+          (get-previous-nodes next-scan-node-set-in-sigma-b g)))
+    (if 
+     (and 
+      (memberp union-node-set-in-sigma-a scan-node-set-in-sigma-a)
+      (path-exists-between-set-a-and-set-b 
+       union-node-set-in-sigma-a next-scan-node-set-in-sigma-b g))
+     (car 
+      (unique-get-symbols 
+       union-node-set-in-sigma-a next-scan-node-set-in-sigma-b symbols))
+     nil)))
+\end{lstlisting} 
+
+
+Lisp development notes
+
+\end{document}
+
+

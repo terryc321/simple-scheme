@@ -1,0 +1,70 @@
+%%%% Starting test base-eval-test
+Group begin: base-eval-test
+Test begin:
+  source-file: "base-eval-test.scm"
+  source-line: 15
+  source-form: (test-equal (base-eval 123 (make-env) identity) 123)
+Test end:
+  result-kind: pass
+  actual-value: 123
+  expected-value: 123
+Test begin:
+  source-file: "base-eval-test.scm"
+  source-line: 18
+  source-form: (test-equal (base-eval #t (make-env) identity) #t)
+Test end:
+  result-kind: pass
+  actual-value: #t
+  expected-value: #t
+Test begin:
+  source-file: "base-eval-test.scm"
+  source-line: 19
+  source-form: (test-equal (base-eval #f (make-env) identity) #f)
+Test end:
+  result-kind: pass
+  actual-value: #f
+  expected-value: #f
+Test begin:
+  source-file: "base-eval-test.scm"
+  source-line: 22
+  source-form: (test-equal (base-eval "harry" (make-env) identity) "harry")
+Test end:
+  result-kind: pass
+  actual-value: "harry"
+  expected-value: "harry"
+Test begin:
+  source-file: "base-eval-test.scm"
+  source-line: 25
+  source-form: (test-equal (base-eval (quote (quote a)) (make-env) identity) (quote a))
+Test end:
+  result-kind: pass
+  actual-value: a
+  expected-value: a
+Test begin:
+  source-file: "base-eval-test.scm"
+  source-line: 26
+  source-form: (test-equal (base-eval (quote (quote x)) (make-env) identity) (quote x))
+Test end:
+  result-kind: pass
+  actual-value: x
+  expected-value: x
+Test begin:
+  source-file: "base-eval-test.scm"
+  source-line: 29
+  source-form: (test-equal (base-eval (quote (if #t 1 2)) (make-env) identity) 1)
+Test end:
+  result-kind: pass
+  actual-value: 1
+  expected-value: 1
+Test begin:
+  source-file: "base-eval-test.scm"
+  source-line: 30
+  source-form: (test-equal (base-eval (quote (if #f 1 2)) (make-env) identity) 2)
+Test end:
+  result-kind: pass
+  actual-value: 2
+  expected-value: 2
+Test begin:
+  source-file: "base-eval-test.scm"
+  source-line: 40
+  source-form: (test-equal (base-eval (quote a) (quote ((c . 4) (d . 5) (b . 3) (a . 1))) identity) 1)

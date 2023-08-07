@@ -3,7 +3,8 @@
 ;; unit tests
 ;; error handling ?
 
-
+((lambda ()
+   
 (define cond->compound?
   (lambda (ex)
     (and (pair? ex)
@@ -22,6 +23,12 @@
 	    (list 'if (caar ex) (append (list 'begin) (cdar ex)) (cond-helper (cdr ex)))))))
 
 
+(install-macro! 'cond
+		 cond->compound?
+		 cond->compound)
+
+
+))
 
 
 ;; ;;(X Y1 Y2 Y3 ..)

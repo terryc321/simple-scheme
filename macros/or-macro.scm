@@ -1,5 +1,7 @@
 
 
+((lambda ()
+
 (define or->compound?
   (lambda (ex)
     (and (pair? ex)
@@ -24,7 +26,14 @@
   (lambda (ex) 
     (or->compound-helper (cdr ex))))
 
-       
+
+(install-macro! 'or
+		 or->compound?
+		 or->compound)
+
+
+))
+
 ;; (or->compound '(or))
 ;;  ;; #f
 ;; (or->compound '(or #t))

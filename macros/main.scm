@@ -1,39 +1,24 @@
 
 
-(load "src/macros/substitution.scm")
+(load "substitution-module.scm")
+(load "alist-module.scm")
+(load "macro-module.scm")
 
-(load "src/macros/alist-module.scm")
+;; ---------------------------------
 
-(load "src/macros/macro-module.scm")
+(load "and-macro.scm")
+(load "begin-simplify.scm")
+(load "cond-macro.scm")
+(load "define-simplify.scm")
+(load "if-simplify.scm")
+(load "lambda-begin-simplify.scm")
+(load "let-macro.scm")
+(load "let-procedure-macro.scm")
+(load "let-star-macro.scm")
+(load "letrec-macro.scm")
+(load "or-macro.scm")
+(load "while-macro.scm")
 
-(load "src/macros/while.scm")
-
-;; list of all of macros defined ...
-
-alist-module.scm
-and-macro.scm
-begin-simplify.scm
-catalog.sh
-cond-macro.scm
-define-simplify.scm
-expand.scm
-if-simplify.scm
-lambda-begin-simplify.scm
-let-macro.scm
-let-procedure-macro.scm
-letrec-macro.scm
-let-star-macro.scm
-macro-module.scm
-macro-register.scm
-macro.scm
-main.scm
-or-macro.scm
-quasiquote.scm
-README
-substitution.scm 
-while.scm ---------------done
-
-
-
+"******* macros loaded ************ "
 
 

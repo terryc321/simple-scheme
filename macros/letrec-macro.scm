@@ -1,5 +1,7 @@
 
 
+((lambda ()
+
 
 (define letrec->compound?
   (lambda (ex)
@@ -28,3 +30,9 @@
 
 
 
+(install-macro! 'letrec
+		 letrec->compound?
+		 letrec->compound)
+
+
+))

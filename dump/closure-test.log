@@ -1,0 +1,60 @@
+%%%% Starting test closure-test
+Group begin: closure-test
+Test begin:
+  source-file: "closure-test.scm"
+  source-line: 14
+  source-form: (test-equal lam (quote (lambda (x y z) 1 2 3 4 5)))
+Test end:
+  result-kind: pass
+  actual-value: (lambda (x y z) 1 2 3 4 5)
+  expected-value: (lambda (x y z) 1 2 3 4 5)
+Test begin:
+  source-file: "closure-test.scm"
+  source-line: 15
+  source-form: (test-equal cloz (quasiquote (closure (unquote lam) (unquote env))))
+Test end:
+  result-kind: pass
+  actual-value: (closure (lambda (x y z) 1 2 3 4 5) ((a . 1) (b . 2) (c . 3)))
+  expected-value: (closure (lambda (x y z) 1 2 3 4 5) ((a . 1) (b . 2) (c . 3)))
+Test begin:
+  source-file: "closure-test.scm"
+  source-line: 16
+  source-form: (test-equal env (closure-env cloz))
+Test end:
+  result-kind: pass
+  actual-value: ((a . 1) (b . 2) (c . 3))
+  expected-value: ((a . 1) (b . 2) (c . 3))
+Test begin:
+  source-file: "closure-test.scm"
+  source-line: 17
+  source-form: (test-equal lam (closure-lam cloz))
+Test end:
+  result-kind: pass
+  actual-value: (lambda (x y z) 1 2 3 4 5)
+  expected-value: (lambda (x y z) 1 2 3 4 5)
+Test begin:
+  source-file: "closure-test.scm"
+  source-line: 18
+  source-form: (test-equal args (closure-args cloz))
+Test end:
+  result-kind: pass
+  actual-value: (x y z)
+  expected-value: (x y z)
+Test begin:
+  source-file: "closure-test.scm"
+  source-line: 19
+  source-form: (test-equal body (closure-body cloz))
+Test end:
+  result-kind: pass
+  actual-value: (1 2 3 4 5)
+  expected-value: (1 2 3 4 5)
+Test begin:
+  source-file: "closure-test.scm"
+  source-line: 20
+  source-form: (test-equal cloz (quasiquote (closure (lambda (x y z) 1 2 3 4 5) ((a . 1) (b . 2) (c . 3)))))
+Test end:
+  result-kind: pass
+  actual-value: (closure (lambda (x y z) 1 2 3 4 5) ((a . 1) (b . 2) (c . 3)))
+  expected-value: (closure (lambda (x y z) 1 2 3 4 5) ((a . 1) (b . 2) (c . 3)))
+Group end: closure-test
+# of expected passes      7

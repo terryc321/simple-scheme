@@ -1,19 +1,19 @@
 
 
 ;; github terryc321/simple-scheme ...
-(add-to-load-path "/home/terry/simple-scheme/src/")
+;;(add-to-load-path "/home/terry/simple-scheme/src/")
 ;;(add-to-load-path "/home/terry/simple-scheme/macros/")
 
 ;; expand loads other macros cond let let* and or 
 ;;(load "/home/terry/simple-scheme/macros/expand.scm")
 
-(define-module (machine)
-  #:use-module (list-utility)
-  #:use-module (environment)  
-  #:use-module (closure)
-  #:use-module (derived)  ;; for own macro expansions
-;;  #:use-module (ice-9 pretty-print) ;; circular lists cause confusion
-  #:export (run))
+;; (define-module (machine)
+;;   #:use-module (list-utility)
+;;   #:use-module (environment)  
+;;   #:use-module (closure)
+;;   #:use-module (derived)  ;; now called macro-expander-module ...for own macro expansions 
+;; ;;  #:use-module (ice-9 pretty-print) ;; circular lists cause confusion
+;;   #:export (run))
 
 
 ;; for emacs input-output
@@ -808,7 +808,7 @@
 ;; ------------------------------------------------------------------------------------------------
 
 
-(define run
+(define machine-run
   (lambda ()
     (set! env (initial-environment))
     (set! expr 'a)
@@ -817,4 +817,6 @@
     ;; m-repl handle continue
     (m-repl)
     ))
+
+(define run machine-run)
 

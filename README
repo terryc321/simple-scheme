@@ -2,6 +2,12 @@
 README LISP 
 
 -------------------------------------------------------------------
+cd to src directory
+
+guile >
+(load "macros/main.scm")
+................................ figure out load macro substitution stuff 
+
 
 load "src/macros/substitution.scm"  ----->
 subst-comma : expr symbol value
@@ -22,10 +28,8 @@ load "src/macros/while.scm"
 --> executes install-macro!
        |--> requires macros/substitution.scm
 
-
-
 load required macros 
-
+................................................................................
 
 (install-macro! NAME  PREDICATE  PROCEDURE)
 

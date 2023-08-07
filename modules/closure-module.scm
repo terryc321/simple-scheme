@@ -1,13 +1,13 @@
 
-(define-module (closure)
-  #:use-module (list-utility)
-  #:export (closure?
-	    make-closure
-	    closure-lam
-	    closure-env
-	    closure-args
-	    closure-body
-	    ))
+;; (define-module (closure)
+;;   #:use-module (list-utility)
+;;   #:export (closure?
+;; 	    make-closure
+;; 	    closure-lam
+;; 	    closure-env
+;; 	    closure-args
+;; 	    closure-body
+;; 	    ))
 
 
 ;; (closure lam env)

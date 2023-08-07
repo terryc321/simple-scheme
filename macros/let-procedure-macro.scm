@@ -10,6 +10,9 @@
 ;;                   (if (< i 10)  ; is the loop body
 ;;                       (loop (+ i 1))))))
 ;;    (loop 0)) ; start the recursion with 0 as arg i
+
+((lambda ()
+   
 (define let-procedure->compound?
   (lambda (ex)
     (and (pair? ex)
@@ -27,3 +30,10 @@
 					      (append (list 'lambda syms) body))))
 			    (list (cons name vals)))))))
 
+
+(install-macro! 'let-procedure->compound
+		 let-procedure->compound?
+		 let-procedure->compound)
+
+
+))

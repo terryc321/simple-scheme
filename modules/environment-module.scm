@@ -1,16 +1,16 @@
 
 
 
-(define-module (environment)
-  #:use-module (list-utility)
-  #:export (
-	    make-env
-	    lookup-env
-	    extend-env!
-	    set-env!
-	    define-env!
-	    fresh-env
-	    ))
+;; (define-module (environment)
+;;   #:use-module (list-utility)
+;;   #:export (
+;; 	    make-env
+;; 	    lookup-env
+;; 	    extend-env!
+;; 	    set-env!
+;; 	    define-env!
+;; 	    fresh-env
+;; 	    ))
 
 
 ;; does not work if environment is initially empty ,

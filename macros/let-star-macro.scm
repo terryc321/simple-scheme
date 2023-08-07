@@ -1,5 +1,7 @@
 
 
+((lambda ()
+
 (define let*->compound?
   (lambda (ex)
     (and (pair? ex)
@@ -32,6 +34,13 @@
       (let*->compound-helper (car (cdr ex))
 			     (cdr (cdr ex))
 			     ))))
+
+(install-macro! 'let*->compound
+		 let*->compound?
+		 let*->compound)
+
+
+))
 
 
 ;; can see there are quite a few expansions required for let*

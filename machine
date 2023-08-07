@@ -1,4 +1,9 @@
 #!/bin/bash
 
-rlwrap guile -L . -e '(begin (add-to-load-path "/home/terry/simple-scheme/src/") (use-modules (machine)) (run))' $@
+cd /home/terry/simple-scheme/src
+
+echo "Current working directory : $(pwd)"
+
+rlwrap guile -L . -e '(begin (load "main.scm")(machine-run))' $@
+
 

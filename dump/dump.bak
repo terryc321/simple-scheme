@@ -1,0 +1,63 @@
+
+dumped old environment stuff here ...
+
+
+
+(define env-key-values (lambda (ev) (second ev)))
+
+(define env-lookup
+  (lambda (sym env-given)
+    (define (recur ys)
+      (cond
+       ((null? ys)
+	(display "VARIABLE NOT FOUND :") (display sym) (newline)
+	(display "QUESTIONABLE ENV :") (write env) (newline)(newline)
+	(halt))
+       ((eq? sym (first (first ys))) (set! val (second (first ys))) (cont))
+       (#t (recur (cdr ys)))))
+    (recur (unpack-environment env-given))))
+
+
+(define (arglist-bind args vals)
+  (cond
+   ((symbol? args) (cons (list args vals) '())) ;; slurp + done
+   ((null? args) '()) ;; done -- maybe we threw inputs away ?
+   (#t
+    (cons
+     (list (car args) (car vals))
+     (arglist-bind (cdr args) (cdr vals))))))
+
+(define pack-environment
+  (lambda (ev) (list 'environment ev)))
+
+(define (extend-env sym vel ev)
+  (pack-environment (cons (list sym vel)
+			  (unpack-environment ev))))
+
+(define (arglist-extend-env xs ev)
+  (cond
+   ((null? xs) ev)
+   (#t (let* ((key-value (first xs))
+	      (key (first key-value))
+	      (vel (second key-value)))
+	 (extend-env key vel (arglist-extend-env (cdr xs) ev))))))
+
+
+-------------------------------------------------------------------------------
+
+
+;; using procedures with returns here ...
+;; bit of a cheat sheet
+;; 
+
+
+(define fourth (lambda (x) (car (cdr (cdr (cdr x))))))
+(define third (lambda (x) (car (cdr (cdr x)))))
+(define second (lambda (x) (car (cdr x))))
+(define first (lambda (x) (car x)))
+(define rest (lambda (x) (cdr x)))
+
+(define (macro-closure? x) #f)
+;;(define (environment? x) (and (pair? x) (eq? (car x) 'environment)))
+
+

@@ -1,16 +1,17 @@
 
-(define-module (list-utility)
-  #:export (first
-	    second
-	    third
-	    fourth
-	    fifth
-	    sixth
-	    seventh
-	    eighth
-	    nineth
-	    tenth
-	    rest))
+;; (define-module (list-utility)
+;;   #:export (first
+;; 	    second
+;; 	    third
+;; 	    fourth
+;; 	    fifth
+;; 	    sixth
+;; 	    seventh
+;; 	    eighth
+;; 	    nineth
+;; 	    tenth
+;; 	    rest))
+
 
 (define (elem n xs)
   (cond

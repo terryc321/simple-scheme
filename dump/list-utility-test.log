@@ -1,0 +1,180 @@
+%%%% Starting test list-utility-test
+Group begin: list-utility-test
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 10
+  source-form: (test-equal (first ys) (quote a))
+Test end:
+  result-kind: pass
+  actual-value: a
+  expected-value: a
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 11
+  source-form: (test-equal (second ys) (quote b))
+Test end:
+  result-kind: pass
+  actual-value: b
+  expected-value: b
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 12
+  source-form: (test-equal (third ys) (quote c))
+Test end:
+  result-kind: pass
+  actual-value: c
+  expected-value: c
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 13
+  source-form: (test-equal (fourth ys) (quote d))
+Test end:
+  result-kind: pass
+  actual-value: d
+  expected-value: d
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 14
+  source-form: (test-equal (fifth ys) (quote e))
+Test end:
+  result-kind: pass
+  actual-value: e
+  expected-value: e
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 15
+  source-form: (test-equal (sixth ys) (quote f))
+Test end:
+  result-kind: pass
+  actual-value: f
+  expected-value: f
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 16
+  source-form: (test-equal (seventh ys) (quote g))
+Test end:
+  result-kind: pass
+  actual-value: g
+  expected-value: g
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 17
+  source-form: (test-equal (eighth ys) (quote h))
+Test end:
+  result-kind: pass
+  actual-value: h
+  expected-value: h
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 18
+  source-form: (test-equal (nineth ys) (quote i))
+Test end:
+  result-kind: pass
+  actual-value: i
+  expected-value: i
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 19
+  source-form: (test-equal (tenth ys) (quote j))
+Test end:
+  result-kind: pass
+  actual-value: j
+  expected-value: j
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 20
+  source-form: (test-equal ys (list (quote a) (quote b) (quote c) (quote d) (quote e) (quote f) (quote g) (quote h) (quote i) (quote j)))
+Test end:
+  result-kind: pass
+  actual-value: (a b c d e f g h i j)
+  expected-value: (a b c d e f g h i j)
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 23
+  source-form: (test-equal (first ys) 1)
+Test end:
+  result-kind: pass
+  actual-value: 1
+  expected-value: 1
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 24
+  source-form: (test-equal (second ys) 2)
+Test end:
+  result-kind: pass
+  actual-value: 2
+  expected-value: 2
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 25
+  source-form: (test-equal (third ys) 3)
+Test end:
+  result-kind: pass
+  actual-value: 3
+  expected-value: 3
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 26
+  source-form: (test-equal (fourth ys) 4)
+Test end:
+  result-kind: pass
+  actual-value: 4
+  expected-value: 4
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 27
+  source-form: (test-equal (fifth ys) 5)
+Test end:
+  result-kind: pass
+  actual-value: 5
+  expected-value: 5
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 28
+  source-form: (test-equal (sixth ys) 6)
+Test end:
+  result-kind: pass
+  actual-value: 6
+  expected-value: 6
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 29
+  source-form: (test-equal (seventh ys) 7)
+Test end:
+  result-kind: pass
+  actual-value: 7
+  expected-value: 7
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 30
+  source-form: (test-equal (eighth ys) 8)
+Test end:
+  result-kind: pass
+  actual-value: 8
+  expected-value: 8
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 31
+  source-form: (test-equal (nineth ys) 9)
+Test end:
+  result-kind: pass
+  actual-value: 9
+  expected-value: 9
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 32
+  source-form: (test-equal (tenth ys) 10)
+Test end:
+  result-kind: pass
+  actual-value: 10
+  expected-value: 10
+Test begin:
+  source-file: "list-utility-test.scm"
+  source-line: 33
+  source-form: (test-equal ys (list 1 2 3 4 5 6 7 8 9 10 11 12))
+Test end:
+  result-kind: pass
+  actual-value: (1 2 3 4 5 6 7 8 9 10 11 12)
+  expected-value: (1 2 3 4 5 6 7 8 9 10 11 12)
+Group end: list-utility-test
+# of expected passes      22
