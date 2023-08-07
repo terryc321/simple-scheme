@@ -421,6 +421,11 @@
   (lambda (xs)
     (cond
      ((null? xs) '())
+     ((and (pair? xs)   ;; ------- improper lists cause upset??
+	   (not (null? (cdr xs)))
+	   (not (pair? (cdr xs))))
+      (cons (expand (car xs))
+	    (cdr xs)))	   
      (#t (cons (expand (car xs))
 	       (expand-elems (cdr xs)))))))
 
@@ -454,7 +459,12 @@
 
     (let ((expand-1 (expand ex)))
       (if (equal? ex expand-1)
-	  ex
+	  (begin
+	    (format #t "final expansion => ")
+	    (newline)
+	    (pretty-print ex)
+	    (newline)	    
+	    ex)
 	  (expand-derived expand-1)))))
 
 

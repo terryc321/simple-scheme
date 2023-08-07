@@ -2,6 +2,24 @@
 README LISP 
 
 -------------------------------------------------------------------
+
+
+-------------------------------------------------------------------
+named argument lists
+
+
+-------------------------------------------------------------------
+destructuring on arglist like s-expression pattern matching ...
+
+((lambda a a) 1 2 3) ;; (1 2 3)
+
+((lambda () 3)) ;; invoke no args
+((lambda (a) 4) 5) ;; pass argument , do not use it , return answer
+((lambda (a b) a) 6 7) ;; pass 2 args , return 1st 
+((lambda (a b) b) 7 8) ;; pass 2 args , return 2nd
+((lambda (a . b) b) 1 2 3 4) ;; expect list (2 3 4) but baulks ?? whys..
+
+-------------------------------------------------------------------
 machine.scm - sicp style register machine for 
 
 -------------------------------------------------------------------
