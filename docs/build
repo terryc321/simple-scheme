@@ -1,0 +1,11 @@
+#!/bin/bash
+
+rm -f manual.pdf manual.dvi manual.ps
+
+latex manual.tex
+latex manual.tex
+
+dvips manual.dvi
+dvipdf manual.dvi
+
+

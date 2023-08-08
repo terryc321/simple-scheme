@@ -1,6 +1,88 @@
 
 README LISP 
 
+
+-------------------------------------------------------------------
+
+protect core procedures
+
+*apple-core*
+
+
+
+-------------------------------------------------------------------
+
+reliable system ?
+
+if everything can be redefined then
+so best thing to do is get in first
+
+start system
+load file that redefines everything ...
+
+redefine define so that can only define something once and not allowed
+to redefine it
+
+e.g large file
+ (define this-here ... at top of file ...)
+ ... 1000;s lines of code
+ (define this-here ... somewhere in another file ... middle of nowhere ...)
+ ... just clobbered original definition ...
+
+
+
+-------------------------------------------------------------------
+
+
+returned to flat list files with lists of defines
+if feet get trodden on , well ...
+
+the lack of easy module system that is portable seems a bit sad.
+
+guile
+
+(letrec ((....))
+  (use-modules (ice-9 pretty-print))
+  ...
+  (pretty-print "something odd"))
+
+pretty-print is now visible at the top-level ?? so some bad environment mutation
+must have taken place
+...
+
+-------------------------------------------------------------------
+
+modules
+
+real headache
+
+long nested letrec , get one problem in s expression ,
+cant find where mistake is ...
+
+
+
+-------------------------------------------------------------------
+modules
+
+assertion-module.scm
+list-utility-module.scm
+alist-module.scm
+
+
+
+
+may seem rather mundane but bear with me , grrr
+
+suppose set system up as desired
+then something comes along and redefines some essential primitive
+may define ...
+
+when load file , how can be sure that define is DEFINING
+meaning that DEFINE is how it is designed in R5Rs R6Rs R7Rs ...
+rather than some weird incantation that produces garbage ??
+
+
+
 -------------------------------------------------------------------
 cd to src directory
 

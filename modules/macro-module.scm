@@ -1,5 +1,4 @@
 
-;; this file is called load-me-first
 
 ;; sixth6 = skip 5 then first
 ;; fourth4 = skip 3 then first

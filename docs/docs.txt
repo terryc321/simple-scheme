@@ -1,0 +1,99 @@
+
+docs
+ -----------------------------------------------------------
+
+files
+-------
+
+blue.scm -- basic evaluator ??
+red.scm --- some good stuff quasiquote , awful pretty printer , 
+machine.scm --- sicp machine , not sure if stack is correct , may not be TCO yet
+
+-----------------------------------------------------------------------
+
+simple tree macro expander
+------------------------------------------
+(define name _ )
+(lambda arglist _ _ _ _ )
+(quote _)
+(set! x _)
+
+macro expander will expand on all function arguments by default ... 
+(cons _ _)
+(car _)
+(cdr _)
+(+ _ _ _ _ _ )
+
+cond   -> if tree
+let    -> lambda tree
+           (let ((a ..A..)(b ..B..)(c ..C...)) ...body...)
+	   =>
+	   ((lambda (a b c) ...body) ..A.. ..B.. ..C..)
+let*   -> lambda tree
+            (let* ((a ..)(b ..)(c ..)) ...body...)
+	    =>
+	    (let ((a ..))
+	       (let ((b ..))
+	          (let ((c ...))
+		       ..body...)))		       
+letrec -> lambda tree
+(list _ _ _ _ )
+(set-car! _ _ )
+(set-cdr! _ _ )
+(cons _ _)
+(display _)
+(write _)
+
+----------------------------------------------------------------------------
+
+
+let forms : let let* letrec letrec*
+
+control forms : when unless cond
+
+short circuiting logic : and or
+
+
+
+
+-----------------------------------------------------------------------
+
+machine.scm was written in response to completely broken red.scm
+implementation of procedure calls ... did i miss something ...
+
+
+environment being shared by lambdas 
+
+simpler to have docs in same directory as the code
+
+say identity function (lambda (x) x)
+
+lambda will grab the environment immediately
+
+this is a little premature as this factorial 
+
+(define fac (lambda (n)
+	      (if (< n 2)
+		  1
+		  (* n (fac (- n 1))))))
+		  
+get undefined fac
+
+at time lambda is encountered , fac does not exist in the environment
+
+similarly for mutually recursive functions
+
+-----------------------------------------------------------------------------
+
+(define bill 0)
+(define bob 0)
+
+(set! bill (lambda ...))
+(set! bob (lambda ...))
+
+now bill and bob will see each other in the environment when lambda clamps down environment
+
+---------------------------------------------------------------------------------
+
+test/lambda.scm --- some calling conventions tested , check arguments come out in correct location
+
